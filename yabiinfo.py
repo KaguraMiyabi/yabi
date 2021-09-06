@@ -67,6 +67,22 @@ class yabiinfo:
                 print("错误: 不支持的颜色模式")
             quit()
         p += 1
+        if self.colormode < 3: # 單色和灰度模式可以指定基礎顏色和通道
+            for _ in range(4):
+                self.color.append(self.data[p])
+                p += 1
+            print("基础颜色: " + ','.join([str(x) for x in self.color]))
+            aislebin = bin(self.data[p])
+            aislebini = 0
+            for v in aislebin:
+                if aislebini > 1:
+                    if v == "1":
+                        self.aisle.append(True)
+                    else:
+                        self.aisle.append(False)
+                aislebini += 1
+            print("影响RGBA通道: " + ','.join([str(x) for x in self.aisle]))
+            p += 1
         sizelen: int = int(self.data[p])
         p += 1
         sizearr: list[int] = []

@@ -36,6 +36,7 @@ class png2yabi:
         mode  : int  色彩模式 1.單色 2.灰度 3.RGB 4.RGBA
         """
         img: Image = Image.open(file)
+        img = img.convert("RGBA")
         imagearray: np.ndarray = np.array(img)
         # 基本資訊
         data: list[int] = [
@@ -44,6 +45,17 @@ class png2yabi:
             1,  # 版本
             mode,  # 色彩模式
         ]
+        if mode < 3:
+            # 單色和灰度模式可以指定基礎顏色和通道
+            if len(color) == 0:
+                color = "0,0,0,255,1110"
+            basecolorArr: list[str] = color.split(',')
+            # 受影響的通道（RGBA四個通道由二進位制組成十六進位制）
+            for i in range(len(basecolorArr)):
+                if i < 4:  # RGBA
+                    data.append(int(basecolorArr[i]))
+                elif i == 4:
+                    data.append(int(basecolorArr[i], 2))
         # 寬度
         widtharr: list[int] = self.val255x(len(imagearray[0]))
         data.append(len(widtharr))  # 接下來多少位表示寬度
